@@ -36,10 +36,32 @@ class StartPage extends StatelessWidget {
             ),
             // 縦方向で余白を作る
             const SizedBox(height: 24),
-            ElevatedButton(onPressed: () => {}, child: const Text('スタート')),
+            ElevatedButton(onPressed: () => showPuzzlePage(context), child: const Text('スタート')),
           ],
         ),
       ),
     );
+  }
+}
+
+// パズルページへ遷移
+void showPuzzlePage(BuildContext context) {
+  Navigator.push(context,
+  MaterialPageRoute(builder: (context) => const PuzzlePage()),
+  );
+}
+
+// パズルページ
+class PuzzlePage extends StatefulWidget {
+  const PuzzlePage({Key? key}) : super(key: key);
+
+  @override
+  State<PuzzlePage> createState() => _PuzzlePageState();
+}
+
+class _PuzzlePageState extends State<PuzzlePage> {
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold();
   }
 }
