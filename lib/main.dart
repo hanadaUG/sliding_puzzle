@@ -80,7 +80,7 @@ class _PuzzlePageState extends State<PuzzlePage> {
           children: [
              Expanded(
               child: Center(
-                child: TilesView(numbers: tileNumbers),
+                child: TilesView(numbers: tileNumbers, isCorrect: calcCorrect(tileNumbers),),
               ),
             ),
             SizedBox(
@@ -96,15 +96,26 @@ class _PuzzlePageState extends State<PuzzlePage> {
       ),
     );
   }
+
+  // 盤面が正解か判定
+  bool calcCorrect(List<int> numbers) {
+    final correctNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 0]; // 正解の状態
+    for (int i = 0; i < correctNumbers.length; i++) {
+      if (numbers[i] != correctNumbers[i]) {return false;}
+    }
+    return true;
+  }
 }
 
 // タイル面
 class TilesView extends StatelessWidget {
   final List<int> numbers;
+  final bool isCorrect;
 
   const TilesView({
     Key? key,
     required this.numbers,
+    required this.isCorrect,
   }) : super(key: key);
 
   @override
@@ -117,7 +128,7 @@ class TilesView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 24),
       children: numbers.map((number) {
         if (number == 0) {return Container();}
-        return TileView(number: number, color: Colors.blue, onPressed: () => {});
+        return TileView(number: number, color: isCorrect ? Colors.green : Colors.blue, onPressed: () => {});
       }).toList(),
     );
   }
