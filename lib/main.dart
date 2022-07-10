@@ -80,13 +80,13 @@ class _PuzzlePageState extends State<PuzzlePage> {
           children: [
              Expanded(
               child: Center(
-                child: TilesView(numbers: tileNumbers, isCorrect: calcCorrect(tileNumbers),),
+                child: TilesView(numbers: tileNumbers, isCorrect: calcCorrect(tileNumbers), onPressed: (number) => swapTile(number),),
               ),
             ),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () => {},
+                onPressed: () => shuffleTiles(),
                 icon: const Icon(Icons.shuffle),
                 label: const Text('シャッフル'),
               ),
@@ -105,17 +105,57 @@ class _PuzzlePageState extends State<PuzzlePage> {
     }
     return true;
   }
+
+  // タップしたタイルを空白と交換
+  void swapTile(int number) {
+    if (canSwapTile(number)) {
+      setState(() {
+        final indexOfTile = tileNumbers.indexOf(number);
+        final indexOfEmpty = tileNumbers.indexOf(0);
+        tileNumbers[indexOfTile] = 0;
+        tileNumbers[indexOfEmpty] = number;
+      });
+    }
+  }
+
+  bool canSwapTile(int number) {
+    final indexOfTile = tileNumbers.indexOf(number);
+    final indexOfEmpty = tileNumbers.indexOf(0);
+
+    // 盤面のindex
+    // 0 1 2
+    // 3 4 5
+    // 6 7 8
+    switch (indexOfEmpty) {
+      case 0: return [1, 3      ].contains(indexOfTile);
+      case 1: return [0, 2, 4   ].contains(indexOfTile);
+      case 2: return [1, 5      ].contains(indexOfTile);
+      case 3: return [0, 4, 6   ].contains(indexOfTile);
+      case 4: return [1, 3, 5, 7].contains(indexOfTile);
+      case 5: return [2, 4, 8   ].contains(indexOfTile);
+      case 6: return [3, 7      ].contains(indexOfTile);
+      case 7: return [4, 6, 8   ].contains(indexOfTile);
+      case 8: return [5, 7      ].contains(indexOfTile);
+      default: return false;
+    }
+  }
+
+  void shuffleTiles() {
+    setState(() {tileNumbers.shuffle();});
+  }
 }
 
 // タイル面
 class TilesView extends StatelessWidget {
   final List<int> numbers;
   final bool isCorrect;
+  final Function(int number) onPressed;
 
   const TilesView({
     Key? key,
     required this.numbers,
     required this.isCorrect,
+    required this.onPressed,
   }) : super(key: key);
 
   @override
@@ -128,7 +168,7 @@ class TilesView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 24),
       children: numbers.map((number) {
         if (number == 0) {return Container();}
-        return TileView(number: number, color: isCorrect ? Colors.green : Colors.blue, onPressed: () => {});
+        return TileView(number: number, color: isCorrect ? Colors.green : Colors.blue, onPressed: () => onPressed(number));
       }).toList(),
     );
   }
